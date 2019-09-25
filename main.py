@@ -79,9 +79,6 @@ def write_register_byte(register, value):
       i2c.write(bytes([register & 0xFF, value & 0xFF]))
       print("$%02X <= 0x%02X" % (register, value))
 
-#Try to great a Digital input
-pin = digitalio.DigitalInOut(board.D4)
-print("Digital IO ok!")
  
 # Try to create an I2C device
 i2c_dev = busio.I2C(board.SCL, board.SDA)
