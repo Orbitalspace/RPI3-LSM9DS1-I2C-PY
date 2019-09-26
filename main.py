@@ -1,9 +1,10 @@
 import board
 import digitalio
 import busio
+import adafruit_lsm9ds1
 import adafruit_bus_device.i2c_device as i2c_device
 from micropython import const
- 
+
 
 _LSM9DS1_ADDRESS_ACCELGYRO       = const(0x6B)
 _LSM9DS1_ADDRESS_MAG             = const(0x1E)
@@ -82,11 +83,25 @@ def write_register_byte(register, value):
  
 # Try to create an I2C device
 i2c_dev = busio.I2C(board.SCL, board.SDA)
-print("I2C ok!")
-
 _i2c = i2c_device.I2CDevice(i2c_dev, _LSM9DS1_ADDRESS_ACCELGYRO)
+print("I2C ok!")
+#Test Reading Register
+read_register(_LSM9DS1_REGISTER_WHO_AM_I_XG,5)
 
 
-read_register(_LSM9DS1_REGISTER_WHO_AM_I_XG,1)
+sensor = adafruit_lsm9ds1.LSM9DS1_I2C(_i2c)
 
 
+while True:
+    # Read acceleration, magnetometer, gyroscope, temperature.
+    accel_x, accel_y, accel_z = sensor.acceleration
+    mag_x, mag_y, mag_z = sensor.magnetic
+    gyro_x, gyro_y, gyro_z = sensor.gyro
+    temp = sensor.temperature
+    # Print values.
+    print('Acceleration (m/s^2): ({0:0.3f},{1:0.3f},{2:0.3f})'.format(accel_x, accel_y, accel_z))
+    print('Magnetometer (gauss): ({0:0.3f},{1:0.3f},{2:0.3f})'.format(mag_x, mag_y, mag_z))
+    print('Gyroscope (degrees/sec): ({0:0.3f},{1:0.3f},{2:0.3f})'.format(gyro_x, gyro_y, gyro_z))
+    print('Temperature: {0:0.3f}C'.format(temp))
+    # Delay for a second.
+    time.sleep(1.0)

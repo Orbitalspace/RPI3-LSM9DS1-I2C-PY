@@ -7,4 +7,11 @@ Requirments:
 4.	pip3 install adafruit-blinka
 
 
+# Background Service (Daemon)
+
+python3 background.py start
+
+python3 background.py stop
+
+python3 background.py restart
 
