@@ -14,6 +14,11 @@ class MyDaemon(Daemon):
                     readSensors()    
                 
 
+def file_setup(filename):
+  header =["accel_x", "accel_y", "accel_z", "mag_x", "mag_y", "mag_z", "gyro_x", "gyro_y", "gyro_z", "temp"]
+  with open(filename,"w") as f:
+    f.write(",".join(str(value) for value in header)+ "\n")
+
 
 def readSensors():
         # Read acceleration, magnetometer, gyroscope, temperature.
@@ -35,7 +40,7 @@ if __name__ == "__main__":
         daemon = MyDaemon('/tmp/daemon-example.pid')
         if len(sys.argv) == 2:
                 if 'start' == sys.argv[1]:
-                        
+                        file_setup("telemetry.csv") #Create new csv file with Header        
                         readSensors() # Sanity Check print sensor values
                         daemon.start()# Start the background service
 
