@@ -6,6 +6,7 @@ import board
 import busio
 import adafruit_lsm9ds1
 from daemon import Daemon
+from comms import send, encode_address
 
 LOG_FREQUENCY = 3
 
@@ -21,6 +22,10 @@ def log_data(sensor_data):
     global filename, batch_data
     batch_data.append(",".join([str(value) for value in sensor_data]))
     if len(batch_data) >= LOG_FREQUENCY:
+        print(batch_data)
+        s = ["".join(x) for x in batch_data]
+        print(s)
+        send("9K2OS", "OBC", batch_data[0]) #[s.join(x) for x in batch_data])
         with open(filename, "a") as f:
             for line in batch_data:
                 f.write(line + "\n")
