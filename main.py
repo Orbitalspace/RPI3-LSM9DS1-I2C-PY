@@ -7,6 +7,8 @@ import busio
 import adafruit_lsm9ds1
 from daemon import Daemon
 from comms import send, encode_address
+_TCP_CONN = 0x01
+_UART_CONN = 0x02
 
 LOG_FREQUENCY = 3
 
@@ -23,13 +25,16 @@ def log_data(sensor_data):
     batch_data.append(",".join([str(value) for value in sensor_data]))
     if len(batch_data) >= LOG_FREQUENCY:
         print(batch_data)
-        s = ["".join(x) for x in batch_data]
-        print(s)
-        send("9K2OS", "OBC", batch_data[0]) #[s.join(x) for x in batch_data])
+        #s = ["".join(x) for x in batch_data]
+        #print(s)
+        
+        send(_TCP_CONN,"9K2S", "OBC", batch_data[0]) #[s.join(x) for x in batch_data])
+
         with open(filename, "a") as f:
             for line in batch_data:
                 f.write(line + "\n")
         batch_data = []
+
 
 def file_setup(fileName, headers):
     global filename
@@ -44,8 +49,7 @@ def readSensors():
     gyro_x, gyro_y, gyro_z = sensor.gyro
     temp = sensor.temperature
     time.sleep(1.0)
-    return accel_x, accel_y, accel_z, mag_x, mag_y, mag_z, gyro_x, gyro_y, gyro_z, temp
-
+    return float("%.3f" % float(accel_x)), float("%.3f" % float(accel_y)), float("%.3f" % float(accel_z)), float("%.3f" % float(mag_x)), float("%.3f" % float(mag_y)), float("%.3f" % float(mag_z)), float("%.3f" % float(gyro_x)), float("%.3f" % float(gyro_y)), float("%.3f" % float(gyro_z)), float("%.3f" % float(temp))
 
 # Global Vars
 i2c = busio.I2C(board.SCL, board.SDA)
